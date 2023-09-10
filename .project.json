@@ -1,5 +1,5 @@
 {
-  "fullNodeVersion": "v2.3.5",
+  "fullNodeVersion": "v2.5.5",
   "compilerOptionsUsed": {
     "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
@@ -9,25 +9,25 @@
     "ignoreCheckExternalCallerWarnings": false
   },
   "infos": {
-    "IFungibleToken": {
-      "sourceFile": "../node_modules/@alephium/web3/std/fungible_token_interface.ral",
-      "sourceCodeHash": "6809cb06fb20fa7edf529461998beeebd12b1636d439612cca2f84214dbf4a20",
+    "FriendTech": {
+      "sourceFile": "friend_tech.ral",
+      "sourceCodeHash": "c0284f147043d835f8cd7957ac2492193a5e4315eab183ccfa667bbc93fd408e",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "",
+      "codeHashDebug": "6700a9dddc2cec12d271fb7ec3cc980728895d9d59423f237d9d9a5cd5010c27",
       "warnings": []
     },
-    "TokenFaucet": {
-      "sourceFile": "token.ral",
-      "sourceCodeHash": "3a12c7604f3899bde03ab81e81eac394a53e723c6e99bc38aeb722689826759f",
-      "bytecodeDebugPatch": "=20-2+67=101+3a0007e02=1+75468652063757272656e742062616c616e63652069732000=46",
-      "codeHashDebug": "a3309aa3a0dbd0c53b67a0c422316dcbc0571d8fa5f9ea2ab374b5c110f4efe2",
+    "SubjectShares": {
+      "sourceFile": "subject_shares.ral",
+      "sourceCodeHash": "dbe41b53156f213f41fd52570cbc7421e25702cb45dbc7fedc7d677aee88934a",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "d1c181fdad486cfb2f8f2a5b2a00f06316be01f4aee28a88e9a60a54135c29a9",
       "warnings": []
     },
-    "Withdraw": {
-      "sourceFile": "withdraw.ral",
-      "sourceCodeHash": "52423580f02f5aab7050bfb9a14b497ea4bdcb10b3444483650f3dad8e0e5330",
+    "SubjectSharesBalance": {
+      "sourceFile": "subject_shares_balance.ral",
+      "sourceCodeHash": "30be7ccfae12a180b958c7094606fb3fa30c3c91a12d78e635303059c8254101",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "",
+      "codeHashDebug": "3db400267b6d4ab5737e7daf05a152f31ed33b890a8579e5256531e1f5c7496a",
       "warnings": []
     }
   }

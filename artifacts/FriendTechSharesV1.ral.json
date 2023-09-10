@@ -1,0 +1,164 @@
+{
+  "version": "v2.5.5",
+  "name": "FriendTechSharesV1",
+  "bytecode": "04051040204030409a40b0010001010007b4a000450c7b1600a101010001010007b4a000450c7b1600a102010001010007b4a000450c7b1600a103010002050140400c17020c170316000c304c1016000d2b16002c0e16000d2b2c0d2a2c13062d170216000c2f16010d2f1a4b1616000d2b16012a160016012a2c0e16000d2b16012a2c0d2a2c13062d1703160316022b1704160413c40de0b6b3a76400002c137e802d0201000101000bb4a000450c7b1600a10006a00016005f",
+  "codeHash": "c5b06276851bd6ff04375cc47dfd6d0f6957de8bec4419a97954570f41ef7290",
+  "fieldsSig": {
+    "names": [
+      "owner",
+      "protocalFeeDestination",
+      "protocalFeePercent",
+      "subjectFeePercent"
+    ],
+    "types": [
+      "Address",
+      "Address",
+      "U256",
+      "U256"
+    ],
+    "isMutable": [
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "eventsSig": [
+    {
+      "name": "Trade",
+      "fieldNames": [
+        "trader",
+        "subject",
+        "isBuy",
+        "shareAmount",
+        "alphAmount",
+        "protocolAlphAmount",
+        "subjectAlphAmount",
+        "supply"
+      ],
+      "fieldTypes": [
+        "Address",
+        "Address",
+        "Bool",
+        "U256",
+        "U256",
+        "U256",
+        "U256",
+        "U256"
+      ]
+    },
+    {
+      "name": "OwnerUpdated",
+      "fieldNames": [
+        "previous",
+        "new"
+      ],
+      "fieldTypes": [
+        "Address",
+        "Address"
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "setFeeDestination",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "feeDestination"
+      ],
+      "paramTypes": [
+        "Address"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "setProtocolFeePercent",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "feePercent"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "setSubjectFeePercent",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "feePercent"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "getPrice",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "supply",
+        "amount"
+      ],
+      "paramTypes": [
+        "U256",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "updateOwner",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "newOwner"
+      ],
+      "paramTypes": [
+        "Address"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    }
+  ],
+  "constants": [],
+  "enums": [
+    {
+      "name": "ErrorCodes",
+      "fields": [
+        {
+          "name": "OwnerAllowedOnly",
+          "value": {
+            "type": "U256",
+            "value": "0"
+          }
+        }
+      ]
+    }
+  ]
+}

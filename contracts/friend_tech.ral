@@ -1,0 +1,160 @@
+Contract FriendTech(
+    subjectSharesTemplateId: ByteVec,
+    subjectSharesBalanceTemplateId: ByteVec,
+    mut owner: Address,
+    mut protocolFeeDestination: Address,
+    mut protocolFeePercent: U256,   // basis point
+    mut subjectFeePercent: U256     // basis point
+) {
+    event Trade(
+        trader: Address,
+        subject: Address,
+        isBuy: Bool,
+        shareAmount: U256,
+        alphAmount: U256,
+        protocolAlphAmount: U256,
+        subjectAlphAmount: U256,
+        supply: U256
+    )
+
+    event OwnerUpdated(
+        previous: Address,
+        new: Address
+    )
+
+    enum ErrorCodes {
+        OwnerAllowedOnly = 0
+        SubjectAllowedFirstShareOnly = 1
+        NoShareForTheSubject = 2
+        CanNotSellLastShare = 3
+        InsufficientShares = 4
+    }
+
+    @using(updateFields = true)
+    pub fn setFeeDestination(feeDestination: Address) -> () {
+        checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
+        protocolFeeDestination = feeDestination
+    }
+
+    @using(updateFields = true)
+    pub fn setProtocolFeePercent(feePercent: U256) -> () {
+        checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
+        protocolFeePercent = feePercent
+    }
+
+    @using(updateFields = true)
+    pub fn setSubjectFeePercent(feePercent: U256) -> () {
+        checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
+        subjectFeePercent = feePercent
+    }
+
+    pub fn getPrice(supply: U256, amount: U256) -> U256 {
+        let mut sum1 = 0
+        let mut sum2 = 0
+        if (supply != 0) {
+          sum1 = (supply - 1 )* (supply) * (2 * (supply - 1) + 1) / 6
+        }
+        if (!(supply == 0 && amount == 1)) {
+          sum2 = (supply - 1 + amount) * (supply + amount) * (2 * (supply - 1 + amount) + 1) / 6
+        }
+        let summation = sum2 - sum1
+        return summation * 1 alph / 16000
+    }
+
+    pub fn getBuyPrice(sharesSubject: Address, amount: U256) -> U256 {
+        let supply = getSupply(sharesSubject)
+        return getPrice(supply, amount)
+    }
+
+    pub fn getSellPrice(sharesSubject: Address, amount: U256) -> U256 {
+        let supply = getSupply(sharesSubject)
+        return getPrice(supply - amount, amount)
+    }
+
+    pub fn getBuyPriceAfterFee(sharesSubject: Address, amount: U256) -> U256 {
+        let price = getBuyPrice(sharesSubject, amount)
+        let protocolFee = price * protocolFeePercent / 10000
+        let subjectFee = price * subjectFeePercent / 10000
+        return price + protocolFee + subjectFee
+    }
+
+    pub fn getSellPriceAfterFee(sharesSubject: Address, amount: U256) -> U256 {
+        let price = getSellPrice(sharesSubject, amount)
+        let protocolFee = price * protocolFeePercent / 10000
+        let subjectFee = price * subjectFeePercent / 10000
+        return price - protocolFee - subjectFee
+    }
+
+
+    @using(checkExternalCaller = false, assetsInContract = true, preapprovedAssets = true)
+    pub fn buyShares(sharesSubject: Address, amount: U256) -> () {
+        let supply = getSupply(sharesSubject)
+        let buyer = callerAddress!()
+        assert!(supply > 0 || buyer == sharesSubject, ErrorCodes.SubjectAllowedFirstShareOnly)
+        let price = getPrice(supply, amount)
+        let protocolFee = price * protocolFeePercent / 10000
+        let subjectFee = price * subjectFeePercent / 10000
+
+        let subjectSharesContractId = subContractId!(toByteVec!(sharesSubject))
+        if (contractExists!(subjectSharesContractId)) {
+            SubjectShares(subjectSharesContractId).buy{buyer -> ALPH: subjectFee}(buyer, amount, subjectFee)
+        } else {
+            let (encodeImmutableFields, encodeMutableFields) = SubjectShares.encodeFields!(
+                subjectSharesBalanceTemplateId,
+                buyer,
+                selfContractId!(),
+                amount
+            )
+            copyCreateSubContract!{buyer -> ALPH: subjectFee + 1 alph}(
+                toByteVec!(buyer),
+                subjectSharesTemplateId,
+                encodeImmutableFields,
+                encodeMutableFields
+            )
+        }
+
+        transferToken!(buyer, selfAddress!(), ALPH, price)
+        transferToken!(buyer, protocolFeeDestination, ALPH, protocolFee)
+
+        emit Trade(buyer, sharesSubject, true, amount, price, protocolFee, subjectFee, supply + amount)
+    }
+
+    @using(checkExternalCaller = false, assetsInContract = true, preapprovedAssets = true)
+    pub fn sellShares(sharesSubject: Address, amount: U256) -> () {
+        let seller = callerAddress!()
+        let subjectSharesContractId = subContractId!(toByteVec!(sharesSubject))
+        assert!(contractExists!(subjectSharesContractId), ErrorCodes.NoShareForTheSubject)
+        let subjectShares = SubjectShares(subjectSharesContractId)
+        let supply = subjectShares.getSupply()
+        assert!(supply > amount, ErrorCodes.CanNotSellLastShare)
+
+        let price = getPrice(supply - amount, amount)
+        let protocolFee = price * protocolFeePercent / 10000
+        let subjectFee = price * subjectFeePercent / 10000
+        assert!(subjectShares.getBalance(seller) >= amount, ErrorCodes.InsufficientShares)
+
+        subjectShares.sell{seller -> ALPH : subjectFee}(seller, amount, subjectFee)
+
+        transferToken!(seller, protocolFeeDestination, ALPH, protocolFee)
+        transferTokenFromSelf!(seller, ALPH, price)
+
+        emit Trade(seller, sharesSubject, false, amount, price, protocolFee, subjectFee, supply - amount)
+    }
+
+    @using(updateFields = true)
+    pub fn updateOwner(newOwner: Address) -> () {
+        checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
+
+        owner = newOwner
+        emit OwnerUpdated(owner, newOwner)
+    }
+
+    fn getSupply(sharesSubject: Address) -> U256 {
+        let subjectSharesContractId = subContractId!(toByteVec!(sharesSubject))
+        if (contractExists!(subjectSharesContractId)) {
+           return SubjectShares(subjectSharesContractId).getSupply()
+        } else {
+           return 0
+        }
+    }
+}

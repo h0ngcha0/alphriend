@@ -4,23 +4,44 @@
 
 import { RunScriptResult, DeployContractExecutionResult } from "@alephium/cli";
 import { NetworkId } from "@alephium/web3";
-import { TokenFaucet, TokenFaucetInstance } from ".";
+import {
+  SubjectSharesBalance,
+  SubjectSharesBalanceInstance,
+  SubjectShares,
+  SubjectSharesInstance,
+  FriendTech,
+  FriendTechInstance,
+} from ".";
 import { default as testnetDeployments } from "../.deployments.testnet.json";
 import { default as devnetDeployments } from "../.deployments.devnet.json";
 
 export type Deployments = {
   deployerAddress: string;
   contracts: {
-    TokenFaucet: DeployContractExecutionResult<TokenFaucetInstance>;
+    SubjectSharesBalance: DeployContractExecutionResult<SubjectSharesBalanceInstance>;
+    SubjectShares: DeployContractExecutionResult<SubjectSharesInstance>;
+    FriendTech: DeployContractExecutionResult<FriendTechInstance>;
   };
 };
 
 function toDeployments(json: any): Deployments {
   const contracts = {
-    TokenFaucet: {
-      ...json.contracts["TokenFaucet"],
-      contractInstance: TokenFaucet.at(
-        json.contracts["TokenFaucet"].contractInstance.address
+    SubjectSharesBalance: {
+      ...json.contracts["SubjectSharesBalance"],
+      contractInstance: SubjectSharesBalance.at(
+        json.contracts["SubjectSharesBalance"].contractInstance.address
+      ),
+    },
+    SubjectShares: {
+      ...json.contracts["SubjectShares"],
+      contractInstance: SubjectShares.at(
+        json.contracts["SubjectShares"].contractInstance.address
+      ),
+    },
+    FriendTech: {
+      ...json.contracts["FriendTech"],
+      contractInstance: FriendTech.at(
+        json.contracts["FriendTech"].contractInstance.address
       ),
     },
   };
