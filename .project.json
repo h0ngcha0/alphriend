@@ -9,11 +9,25 @@
     "ignoreCheckExternalCallerWarnings": false
   },
   "infos": {
+    "BuyShares": {
+      "sourceFile": "scripts/buy_shares.ral",
+      "sourceCodeHash": "4520df20cdef1a516a14d22c4f2840b86337230c90a4b1e52050f1cd5b08cf6d",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
     "FriendTech": {
       "sourceFile": "friend_tech.ral",
-      "sourceCodeHash": "c0284f147043d835f8cd7957ac2492193a5e4315eab183ccfa667bbc93fd408e",
+      "sourceCodeHash": "5c317d515277c8dfd6b5a2b8b1fadfe5aea2d868414347b2e461ab09d2cb1e4e",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "6700a9dddc2cec12d271fb7ec3cc980728895d9d59423f237d9d9a5cd5010c27",
+      "codeHashDebug": "2094f4ef12565b9bb69e3a2e75521573cf1c0f81745e8ae8ab5aac93dfd7633e",
+      "warnings": []
+    },
+    "SellShares": {
+      "sourceFile": "scripts/sell_shares.ral",
+      "sourceCodeHash": "cd36bf04619ab82c5bb560707bf40dd90f0681652633b0bab95d87eeb2331f65",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     },
     "SubjectShares": {

@@ -119,7 +119,7 @@ Contract FriendTech(
         emit Trade(buyer, sharesSubject, true, amount, price, protocolFee, subjectFee, supply + amount)
     }
 
-    @using(checkExternalCaller = false, assetsInContract = true, preapprovedAssets = true)
+    @using(checkExternalCaller = false, assetsInContract = true)
     pub fn sellShares(sharesSubject: Address, amount: U256) -> () {
         let seller = callerAddress!()
         let subjectSharesContractId = subContractId!(toByteVec!(sharesSubject))
