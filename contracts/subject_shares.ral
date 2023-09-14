@@ -2,6 +2,7 @@ Contract SubjectShares(
     subjectSharesBalanceTemplateId: ByteVec,
     subject: Address,
     friendContractId: ByteVec,
+    mut subjectOwnBalance: U256,
     mut supply: U256
 ) {
     enum ErrorCodes {
@@ -18,17 +19,21 @@ Contract SubjectShares(
         checkCaller!(callerContractId!() == friendContractId, ErrorCodes.FriendContractAllowedOnly)
         supply = supply + amount
 
-        let subjectSharesBalanceContractId = subContractId!(toByteVec!(holder))
-        if (contractExists!(subjectSharesBalanceContractId)) {
-            SubjectSharesBalance(subjectSharesBalanceContractId).addBalance(amount)
+        if (holder == subject) {
+          subjectOwnBalance = subjectOwnBalance + amount
         } else {
-            let (encodeImmutableFields, encodeMutableFields) = SubjectSharesBalance.encodeFields!(subject, selfContractId!(), amount)
-            copyCreateSubContract!{holder -> ALPH: 1 alph}(
-                toByteVec!(holder),
-                subjectSharesBalanceTemplateId,
-                encodeImmutableFields,
-                encodeMutableFields
-            )
+          let subjectSharesBalanceContractId = subContractId!(toByteVec!(holder))
+          if (contractExists!(subjectSharesBalanceContractId)) {
+              SubjectSharesBalance(subjectSharesBalanceContractId).addBalance(amount)
+          } else {
+              let (encodeImmutableFields, encodeMutableFields) = SubjectSharesBalance.encodeFields!(subject, selfContractId!(), amount)
+              copyCreateSubContract!{holder -> ALPH: 1 alph}(
+                  toByteVec!(holder),
+                  subjectSharesBalanceTemplateId,
+                  encodeImmutableFields,
+                  encodeMutableFields
+              )
+          }
         }
 
        transferToken!(holder, selfAddress!(), ALPH, subjectFee)
@@ -48,11 +53,15 @@ Contract SubjectShares(
    }
 
    pub fn getBalance(holder: Address) -> U256 {
-       let subjectSharesBalanceContractId = subContractId!(toByteVec!(holder))
-       if (contractExists!(subjectSharesBalanceContractId)) {
-          return SubjectSharesBalance(subjectSharesBalanceContractId).getBalance()
+       if (holder == subject) {
+           return subjectOwnBalance
        } else {
-          return 0
+           let subjectSharesBalanceContractId = subContractId!(toByteVec!(holder))
+           if (contractExists!(subjectSharesBalanceContractId)) {
+               return SubjectSharesBalance(subjectSharesBalanceContractId).getBalance()
+           } else {
+               return 0
+           }
        }
    }
 }

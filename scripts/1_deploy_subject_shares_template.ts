@@ -14,6 +14,7 @@ const deploySubjectSharesTemplate: DeployFunction<Settings> = async (
       subjectSharesBalanceTemplateId: '',
       subject: randomContractAddress(),
       friendContractId: randomContractId(),
+      subjectOwnBalance: 0n,
       supply: 0n,
     }
   })

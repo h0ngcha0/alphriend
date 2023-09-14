@@ -18,9 +18,9 @@
     },
     "FriendTech": {
       "sourceFile": "friend_tech.ral",
-      "sourceCodeHash": "f022e0aeb2c4d370165c5785902b1ff4166db11205138d8065f31b3e477bd67f",
+      "sourceCodeHash": "d7d2cff233eb88d6cf7e00f7fa0b1803aaecf9cf653774770404b16c7717f224",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "739e70150757f679edc9b1a0964da39d644f61eacc3cd4a11e749783b0a609a6",
+      "codeHashDebug": "90b004f90d69217c8d980812f4f2c04fd1b3986e37b562b245724e6d2547e67a",
       "warnings": []
     },
     "SellShares": {
@@ -32,9 +32,9 @@
     },
     "SubjectShares": {
       "sourceFile": "subject_shares.ral",
-      "sourceCodeHash": "dbe41b53156f213f41fd52570cbc7421e25702cb45dbc7fedc7d677aee88934a",
+      "sourceCodeHash": "f3123b4dd07c911ca29bcb6c9b38b2fd2090e5314112633c0d9414ded5a5add7",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "d1c181fdad486cfb2f8f2a5b2a00f06316be01f4aee28a88e9a60a54135c29a9",
+      "codeHashDebug": "8370476ef0179cbc06e789a81c9f3d36113eea7d5b640b5a8b32460bce957a11",
       "warnings": []
     },
     "SubjectSharesBalance": {

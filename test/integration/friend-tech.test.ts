@@ -130,11 +130,8 @@ class TestFixture {
     if (!this.subjectSharesBalance.get(input.subject)) {
       this.subjectSharesBalance.set(input.subject, new Map())
     }
-    let currentSubjectSharesForBuyer = this.subjectSharesBalance.get(input.subject)!.get(buyerAddress)
-    if (!currentSubjectSharesForBuyer) {
-      currentSubjectSharesForBuyer = ONE_ALPH
-    }
 
+    const currentSubjectSharesForBuyer = this.subjectSharesBalance.get(input.subject)!.get(buyerAddress) ?? 0n
     this.subjectSharesBalance.get(input.subject)!.set(buyerAddress, currentSubjectSharesForBuyer + input.amount)
     this.subjectSharesTotalBalance.set(input.subject, currentSubjectSharesTotalBalance + expectedSubjectFee)
     this.supply = this.supply + input.amount
@@ -146,7 +143,7 @@ class TestFixture {
       expectedBalance: this.subjectSharesTotalBalance.get(input.subject)!,
       holderBalance: {
         address: buyerAddress,
-        amount: this.subjectSharesTotalBalance.get(input.subject)!
+        amount: this.subjectSharesBalance.get(input.subject)?.get(buyerAddress)!
       }
     })
 

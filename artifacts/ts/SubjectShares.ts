@@ -33,6 +33,7 @@ export namespace SubjectSharesTypes {
     subjectSharesBalanceTemplateId: HexString;
     subject: Address;
     friendContractId: HexString;
+    subjectOwnBalance: bigint;
     supply: bigint;
   };
 
@@ -119,7 +120,7 @@ export const SubjectShares = new Factory(
   Contract.fromJson(
     SubjectSharesContractJson,
     "",
-    "d1c181fdad486cfb2f8f2a5b2a00f06316be01f4aee28a88e9a60a54135c29a9"
+    "8370476ef0179cbc06e789a81c9f3d36113eea7d5b640b5a8b32460bce957a11"
   )
 );
 

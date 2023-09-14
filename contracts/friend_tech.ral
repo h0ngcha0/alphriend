@@ -102,6 +102,7 @@ Contract FriendTech(
                 subjectSharesBalanceTemplateId,
                 buyer,
                 selfContractId!(),
+                amount,
                 amount
             )
             copyCreateSubContract!{buyer -> ALPH: subjectFee + 1 alph}(
