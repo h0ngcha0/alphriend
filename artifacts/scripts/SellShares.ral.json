@@ -1,7 +1,7 @@
 {
-  "version": "v2.5.5",
+  "version": "v2.5.6",
   "name": "SellShares",
-  "bytecodeTemplate": "01010300000006{0}{1}0e0c{2}0109",
+  "bytecodeTemplate": "01010300000006{0}{1}0e0c{2}0108",
   "fieldsSig": {
     "names": [
       "subject",

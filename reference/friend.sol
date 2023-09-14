@@ -159,7 +159,7 @@ contract FriendtechSharesV1 is Ownable {
         return getPrice(sharesSupply[sharesSubject], amount);
     }
 
-    function getSellPrice(address sharesSubject, uint256 amount) public view returns (uint256) {
+b    function getSellPrice(address sharesSubject, uint256 amount) public view returns (uint256) {
         return getPrice(sharesSupply[sharesSubject] - amount, amount);
     }
 
