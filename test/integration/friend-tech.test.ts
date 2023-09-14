@@ -54,6 +54,24 @@ describe('Friend tech', () => {
       amount: 3n,
       expectedPrice: price3,
     })
+
+    // Buy 6rd ~ 10th share
+    const price4 = getPrice(5n, 5n)
+    await fixture.buyShares({
+      buyer: signer3,
+      subject: signer1.address,
+      amount: 5n,
+      expectedPrice: price4,
+    })
+
+    // Buy 11th share, signer1 buys signer1's own share
+    const price5 = getPrice(10n, 2n)
+    await fixture.buyShares({
+      buyer: signer1,
+      subject: signer1.address,
+      amount: 2n,
+      expectedPrice: price5,
+    })
   }, 20000)
 
   function getPrice(supply: bigint, amount: bigint): bigint {
@@ -62,17 +80,6 @@ describe('Friend tech', () => {
     const summation = sum2 - sum1
     return summation * ONE_ALPH / 16000n;
   }
-
-  function getSellPrice(supply: bigint, amount: bigint): bigint {
-    return getPrice(supply - amount, amount)
-  }
-
-  function getSellPriceAfterFee(supply: bigint, amount: bigint): bigint {
-    const price = getSellPrice(supply, amount)
-    const protocolFee = price * 500n / 10000n
-    const subjectFee = price * 500n / 10000n
-    return price - protocolFee - subjectFee
-  }
 })
 
 class TestFixture {
@@ -80,15 +87,17 @@ class TestFixture {
   group = 0
   totalProtocolFee: bigint
   friendTechTotalBalance: bigint
-  subjectSharesTotalBalance: bigint
+  subjectSharesTotalBalance: Map<string, bigint>
   supply: bigint
+  subjectSharesBalance: Map<string, Map<string, bigint>>
 
   constructor(friendTech: FriendTechInstance) {
     this.friendTech = friendTech
     this.totalProtocolFee = 0n
     this.friendTechTotalBalance = ONE_ALPH
-    this.subjectSharesTotalBalance = ONE_ALPH
+    this.subjectSharesTotalBalance = new Map()
     this.supply = 0n
+    this.subjectSharesBalance = new Map()
   }
 
   public async buyShares(
@@ -101,7 +110,6 @@ class TestFixture {
     const expectedProtocolFee = this.getProtocolFee(input.expectedPrice)
     const expectedSubjectFee = this.getSubjectFee(input.expectedPrice)
     const totalPayment = input.expectedPrice + expectedProtocolFee + expectedSubjectFee + ONE_ALPH
-    console.log("total payment", totalPayment)
     const result = await BuyShares.execute(input.buyer, {
       initialFields: {
         subject: input.subject,
@@ -114,11 +122,33 @@ class TestFixture {
 
     this.totalProtocolFee = this.totalProtocolFee + expectedProtocolFee
     this.friendTechTotalBalance = this.friendTechTotalBalance + expectedProtocolFee + input.expectedPrice
-    this.subjectSharesTotalBalance = this.subjectSharesTotalBalance + expectedSubjectFee
+    let currentSubjectSharesTotalBalance = this.subjectSharesTotalBalance.get(input.subject)
+    if (!currentSubjectSharesTotalBalance) {
+      currentSubjectSharesTotalBalance = ONE_ALPH
+    }
+    const buyerAddress = (await input.buyer.getSelectedAccount()).address
+    if (!this.subjectSharesBalance.get(input.subject)) {
+      this.subjectSharesBalance.set(input.subject, new Map())
+    }
+    let currentSubjectSharesForBuyer = this.subjectSharesBalance.get(input.subject)!.get(buyerAddress)
+    if (!currentSubjectSharesForBuyer) {
+      currentSubjectSharesForBuyer = ONE_ALPH
+    }
+
+    this.subjectSharesBalance.get(input.subject)!.set(buyerAddress, currentSubjectSharesForBuyer + input.amount)
+    this.subjectSharesTotalBalance.set(input.subject, currentSubjectSharesTotalBalance + expectedSubjectFee)
     this.supply = this.supply + input.amount
 
     await this.verifyFriendTechState({ expectedTotalProtocolFee: this.totalProtocolFee, expectedBalance: this.friendTechTotalBalance })
-    await this.verifySubjectSharesState({ subject: input.subject, expectedSupply: this.supply, expectedBalance: this.subjectSharesTotalBalance })
+    await this.verifySubjectSharesState({
+      subject: input.subject,
+      expectedSupply: this.supply,
+      expectedBalance: this.subjectSharesTotalBalance.get(input.subject)!,
+      holderBalance: {
+        address: buyerAddress,
+        amount: this.subjectSharesTotalBalance.get(input.subject)!
+      }
+    })
 
     return result
   }
@@ -135,7 +165,15 @@ class TestFixture {
     expect(BigInt(balance.balance)).toEqual(input.expectedBalance)
   }
 
-  async verifySubjectSharesState(input: { subject: string, expectedSupply: bigint, expectedBalance: bigint }) {
+  async verifySubjectSharesState(input: {
+    subject: string,
+    expectedSupply: bigint,
+    expectedBalance: bigint,
+    holderBalance: {
+      address: string,
+      amount: bigint
+    }
+  }) {
     const subjectSharesContractAddress = addressFromContractId(
       subContractId(this.friendTech.contractId!, binToHex(encodeAddress(input.subject)), this.group)
     )
@@ -143,6 +181,9 @@ class TestFixture {
     const signer1SharesContractState = await signer1SharesContract.fetchState()
     expect(signer1SharesContractState.fields.subject).toEqual(input.subject)
     expect(signer1SharesContractState.fields.supply).toEqual(input.expectedSupply)
+
+    const holderBalanceResult = (await signer1SharesContract.methods.getBalance({ args: { holder: input.holderBalance.address } })).returns
+    expect(holderBalanceResult).toEqual(input.holderBalance.amount)
 
     const balance = await web3.getCurrentNodeProvider().addresses.getAddressesAddressBalance(subjectSharesContractAddress)
     expect(BigInt(balance.balance)).toEqual(input.expectedBalance)
