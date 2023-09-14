@@ -33,7 +33,7 @@ export namespace FriendTechTypes {
     subjectSharesTemplateId: HexString;
     subjectSharesBalanceTemplateId: HexString;
     owner: Address;
-    protocolFeeDestination: Address;
+    totalProtocolFee: bigint;
     protocolFeePercent: bigint;
     subjectFeePercent: bigint;
   };
@@ -115,14 +115,6 @@ class Factory extends ContractFactory<
   }
 
   tests = {
-    setFeeDestination: async (
-      params: TestContractParams<
-        FriendTechTypes.Fields,
-        { feeDestination: Address }
-      >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "setFeeDestination", params);
-    },
     setProtocolFeePercent: async (
       params: TestContractParams<FriendTechTypes.Fields, { feePercent: bigint }>
     ): Promise<TestContractResult<null>> => {
@@ -202,6 +194,11 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getSupply", params);
     },
+    withdrawProtocolFee: async (
+      params: TestContractParams<FriendTechTypes.Fields, { to: Address }>
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdrawProtocolFee", params);
+    },
   };
 }
 
@@ -210,7 +207,7 @@ export const FriendTech = new Factory(
   Contract.fromJson(
     FriendTechContractJson,
     "",
-    "2094f4ef12565b9bb69e3a2e75521573cf1c0f81745e8ae8ab5aac93dfd7633e"
+    "739e70150757f679edc9b1a0964da39d644f61eacc3cd4a11e749783b0a609a6"
   )
 );
 

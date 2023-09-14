@@ -14,7 +14,7 @@ const deployFriendTech: DeployFunction<Settings> = async (
       subjectSharesTemplateId: subjectSharesTemplateResult.contractInstance.contractId,
       subjectSharesBalanceTemplateId: subjectSharesBalanceTemplateResult.contractInstance.contractId,
       owner: deployer.account.address,
-      protocolFeeDestination: deployer.account.address,
+      totalProtocolFee: 0n,
       protocolFeePercent: network.settings.protocolFeePercent,
       subjectFeePercent: network.settings.subjectFeePercent
     }

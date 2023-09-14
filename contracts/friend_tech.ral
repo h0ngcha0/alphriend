@@ -2,7 +2,7 @@ Contract FriendTech(
     subjectSharesTemplateId: ByteVec,
     subjectSharesBalanceTemplateId: ByteVec,
     mut owner: Address,
-    mut protocolFeeDestination: Address,
+    mut totalProtocolFee: U256,
     mut protocolFeePercent: U256,   // basis point
     mut subjectFeePercent: U256     // basis point
 ) {
@@ -28,12 +28,6 @@ Contract FriendTech(
         NoShareForTheSubject = 2
         CanNotSellLastShare = 3
         InsufficientShares = 4
-    }
-
-    @using(updateFields = true)
-    pub fn setFeeDestination(feeDestination: Address) -> () {
-        checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
-        protocolFeeDestination = feeDestination
     }
 
     @using(updateFields = true)
@@ -85,8 +79,7 @@ Contract FriendTech(
         return price - protocolFee - subjectFee
     }
 
-
-    @using(checkExternalCaller = false, assetsInContract = true, preapprovedAssets = true)
+    @using(checkExternalCaller = false, assetsInContract = true, preapprovedAssets = true, updateFields = true)
     pub fn buyShares(sharesSubject: Address, amount: U256) -> () {
         let supply = getSupply(sharesSubject)
         let buyer = callerAddress!()
@@ -97,7 +90,13 @@ Contract FriendTech(
 
         let subjectSharesContractId = subContractId!(toByteVec!(sharesSubject))
         if (contractExists!(subjectSharesContractId)) {
-            SubjectShares(subjectSharesContractId).buy{buyer -> ALPH: subjectFee}(buyer, amount, subjectFee)
+            let balance = SubjectShares(subjectSharesContractId).getBalance(buyer)
+            let mut approvedAssets = subjectFee
+            if (balance == 0) {
+                // SubjectSharesBalance contract deposit
+                approvedAssets = approvedAssets + 1 alph
+            }
+            SubjectShares(subjectSharesContractId).buy{buyer -> ALPH: approvedAssets}(buyer, amount, subjectFee)
         } else {
             let (encodeImmutableFields, encodeMutableFields) = SubjectShares.encodeFields!(
                 subjectSharesBalanceTemplateId,
@@ -106,20 +105,20 @@ Contract FriendTech(
                 amount
             )
             copyCreateSubContract!{buyer -> ALPH: subjectFee + 1 alph}(
-                toByteVec!(buyer),
+                toByteVec!(sharesSubject),
                 subjectSharesTemplateId,
                 encodeImmutableFields,
                 encodeMutableFields
             )
         }
 
-        transferToken!(buyer, selfAddress!(), ALPH, price)
-        transferToken!(buyer, protocolFeeDestination, ALPH, protocolFee)
+        totalProtocolFee = totalProtocolFee + protocolFee
+        transferToken!(buyer, selfAddress!(), ALPH, price + protocolFee)
 
         emit Trade(buyer, sharesSubject, true, amount, price, protocolFee, subjectFee, supply + amount)
     }
 
-    @using(checkExternalCaller = false, assetsInContract = true)
+    @using(checkExternalCaller = false, assetsInContract = true, updateFields = true)
     pub fn sellShares(sharesSubject: Address, amount: U256) -> () {
         let seller = callerAddress!()
         let subjectSharesContractId = subContractId!(toByteVec!(sharesSubject))
@@ -135,8 +134,8 @@ Contract FriendTech(
 
         subjectShares.sell{seller -> ALPH : subjectFee}(seller, amount, subjectFee)
 
-        transferToken!(seller, protocolFeeDestination, ALPH, protocolFee)
-        transferTokenFromSelf!(seller, ALPH, price)
+        totalProtocolFee = totalProtocolFee + protocolFee
+        transferTokenFromSelf!(seller, ALPH, price + protocolFee)
 
         emit Trade(seller, sharesSubject, false, amount, price, protocolFee, subjectFee, supply - amount)
     }
@@ -156,5 +155,12 @@ Contract FriendTech(
         } else {
            return 0
         }
+    }
+
+    @using(updateFields = true)
+    pub fn withdrawProtocolFee(to: Address) -> () {
+       checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
+       totalProtocolFee = 0
+       transferTokenFromSelf!(to, ALPH, totalProtocolFee)
     }
 }
