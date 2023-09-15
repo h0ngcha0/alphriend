@@ -133,10 +133,10 @@ Contract FriendTech(
         let subjectFee = price * subjectFeePercent / 10000
         assert!(subjectShares.getBalance(seller) >= amount, ErrorCodes.InsufficientShares)
 
-        subjectShares.sell{seller -> ALPH : subjectFee}(seller, amount, subjectFee)
-
         totalProtocolFee = totalProtocolFee + protocolFee
-        transferTokenFromSelf!(seller, ALPH, price + protocolFee)
+        transferTokenFromSelf!(seller, ALPH, price - subjectFee - protocolFee)
+
+        subjectShares.sell{selfAddress!() -> ALPH : subjectFee}(seller, amount, subjectFee)
 
         emit Trade(seller, sharesSubject, false, amount, price, protocolFee, subjectFee, supply - amount)
     }

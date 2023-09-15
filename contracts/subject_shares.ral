@@ -48,8 +48,7 @@ Contract SubjectShares(
        let subjectSharesBalanceContractId = subContractId!(toByteVec!(seller))
        let subjectSharesBalanceContract = SubjectSharesBalance(subjectSharesBalanceContractId)
        subjectSharesBalanceContract.reduceBalance(amount)
-
-       transferToken!(seller, selfAddress!(), ALPH, subjectFee)
+       transferToken!(callerAddress!(), selfAddress!(), ALPH, subjectFee)
    }
 
    pub fn getBalance(holder: Address) -> U256 {
