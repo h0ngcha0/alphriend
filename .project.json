@@ -1,5 +1,5 @@
 {
-  "fullNodeVersion": "v2.5.6",
+  "fullNodeVersion": "v2.5.7",
   "compilerOptionsUsed": {
     "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
@@ -18,9 +18,9 @@
     },
     "FriendTech": {
       "sourceFile": "friend_tech.ral",
-      "sourceCodeHash": "194682a22c7934a9b7a0607e3bf8bb2f8375f56d93bb1fed4b7bd10bb9987155",
+      "sourceCodeHash": "cf98450a4b35d8bdd12267c9e2da95f3e6140d45022eeb29be6d0106bdacc83d",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "6e736e76c301240740859c9feeb9e65a27085b2a672a319eecace3b3022432ea",
+      "codeHashDebug": "f0297edb404347e99558f834c5323ffb5a6b26ba059a4c876a3cce2af074a28c",
       "warnings": []
     },
     "SellShares": {

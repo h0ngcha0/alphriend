@@ -49,7 +49,7 @@ Contract FriendTech(
           sum1 = (supply - 1 )* (supply) * (2 * (supply - 1) + 1) / 6
         }
         if (!(supply == 0 && amount == 1)) {
-          sum2 = (supply - 1 + amount) * (supply + amount) * (2 * (supply - 1 + amount) + 1) / 6
+          sum2 = (supply + amount - 1) * (supply + amount) * (2 * (supply + amount - 1) + 1) / 6
         }
         let summation = sum2 - sum1
         return summation * 1 alph / 16000
