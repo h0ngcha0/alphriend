@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   alephium:
-    image: alephium/dev-alephium:2.5.6_13-0dd71b4d-SNAPSHOT
+    image: alephium/dev-alephium:2.5.7
     restart: "no"
     ports:
       - 19973:19973/tcp

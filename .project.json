@@ -18,9 +18,9 @@
     },
     "FriendTech": {
       "sourceFile": "friend_tech.ral",
-      "sourceCodeHash": "cf98450a4b35d8bdd12267c9e2da95f3e6140d45022eeb29be6d0106bdacc83d",
+      "sourceCodeHash": "9aef7cb0b802baf77ead244b8663606502ff6eb8a77ae3976749b19e792267a6",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "f0297edb404347e99558f834c5323ffb5a6b26ba059a4c876a3cce2af074a28c",
+      "codeHashDebug": "f6bc0baf64260576341602c036beeec5abc8a5becb31f77347c58a67e82c446b",
       "warnings": []
     },
     "SellShares": {

@@ -43,26 +43,18 @@ Contract FriendTech(
     }
 
     pub fn getPrice(supply: U256, amount: U256) -> U256 {
-        let mut sum1 = 0
-        let mut sum2 = 0
-        if (supply != 0) {
-          sum1 = (supply - 1 )* (supply) * (2 * (supply - 1) + 1) / 6
-        }
-        if (!(supply == 0 && amount == 1)) {
-          sum2 = (supply + amount - 1) * (supply + amount) * (2 * (supply + amount - 1) + 1) / 6
-        }
+        let sum1 = if (supply == 0) 0 else (supply - 1 )* (supply) * (2 * (supply - 1) + 1) / 6
+        let sum2 = if (supply == 0 && amount == 1) 0 else (supply + amount - 1) * (supply + amount) * (2 * (supply + amount - 1) + 1) / 6
         let summation = sum2 - sum1
         return summation * 1 alph / 16000
     }
 
     pub fn getBuyPrice(sharesSubject: Address, amount: U256) -> U256 {
-        let supply = getSupply(sharesSubject)
-        return getPrice(supply, amount)
+        return getPrice(getSupply(sharesSubject), amount)
     }
 
     pub fn getSellPrice(sharesSubject: Address, amount: U256) -> U256 {
-        let supply = getSupply(sharesSubject)
-        return getPrice(supply - amount, amount)
+        return getPrice(getSupply(sharesSubject) - amount, amount)
     }
 
     pub fn getBuyPriceAfterFee(sharesSubject: Address, amount: U256) -> U256 {

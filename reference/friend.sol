@@ -114,14 +114,8 @@ abstract contract Ownable is Context {
     }
 }
 
-// File: contracts/FriendtechShares.sol
-
-
-
 pragma solidity >=0.8.2 <0.9.0;
 
-
-// TODO: Events, final pricing model, 
 
 contract FriendtechSharesV1 is Ownable {
     address public protocolFeeDestination;

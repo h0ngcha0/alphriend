@@ -207,7 +207,7 @@ export const FriendTech = new Factory(
   Contract.fromJson(
     FriendTechContractJson,
     "",
-    "f0297edb404347e99558f834c5323ffb5a6b26ba059a4c876a3cce2af074a28c"
+    "f6bc0baf64260576341602c036beeec5abc8a5becb31f77347c58a67e82c446b"
   )
 );
 
